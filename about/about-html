@@ -1,0 +1,102 @@
+<app-header></app-header>
+
+<main class="container my-5">
+  <div class="row">
+    <div class="col-12 text-center mb-4">
+      <h1 class="display-5">About Us</h1>
+      <p class="text-muted mb-0">Learn more about Raindrops Insurance and how to use the app</p>
+    </div>
+  </div>
+
+  
+<div class="row g-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">About Raindrops Insurance</h5>
+
+        <p class="mb-3">
+          Raindrops Insurance was established in <strong>2010</strong> with a mission to
+          provide affordable, transparent, and customer‑centric insurance solutions across India.
+        </p>
+
+        <p class="mb-3">
+          Over the years, we have grown into a trusted insurance provider, offering a wide range of
+          health, life, and general insurance plans designed for individuals, families, and businesses.
+        </p>
+
+        <p class="mb-0">
+          Our focus has always been on delivering exceptional service, seamless digital experience,
+          and 24×7 customer support through innovative technology and dedicated professionals.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">User Interface & How to Use</h5>
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <ol class="mb-3">
+                <li>Use the top navigation to access <strong>Home</strong>, <strong>Plans</strong>, and <strong>About</strong>.</li>
+                <li>On the <strong>Plans</strong> page, browse available policies and view the plan</li>
+                <li>Click <strong>View plan</strong> on a plan to see premium, payment mode, and features.</li>
+                <li>Use the <strong>Contact</strong> section to reach our support for claims or queries.</li>
+              </ol>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Person behind Raindrops Insurance</h5>
+
+        <p class="mb-0">XYZ</p>
+         <p class="mb-0">Founder</p>
+          <p class="mb-0">Bangalore</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Contact</h5>
+          <p class="mb-1"><strong>Email:</strong> support@raindrops.example</p>
+          <p class="mb-1"><strong>Phone:</strong> +91 98765 43210</p>
+          <p class="mb-0"><strong>Hours:</strong> 24×7 Support</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Company Address</h5>
+          <address class="mb-2">
+            Raindrops Insurance Pvt. Ltd.<br>
+            3rd Floor, Tech Park, Outer Ring Road,<br>
+            Bangalore, Karnataka 560103, India
+          </address>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
