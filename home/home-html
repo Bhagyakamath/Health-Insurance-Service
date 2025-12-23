@@ -1,0 +1,24 @@
+<app-header></app-header>
+
+<!-- Main content area -->
+<main class="container my-5">
+  <div class="row align-items-center">
+    <!-- Left: Text -->
+    <section class="col-md-6">
+      <h2 class="mb-3">Protect What Matters</h2>
+      <p class="lead">
+        Raindrops Insurance offers comprehensive plans tailored for you—
+        get peace of mind with flexible premiums, transparent claims, and 24×7 support.
+      </p>
+      <a class="btn btn-primary" [routerLink]="['/plan']">View Plans</a>
+    </section>
+
+    <!-- Right: Image -->
+    <!-- Bootstrap 5: use text-md-end | Bootstrap 4: use text-md-right -->
+    <section class="col-md-6 text-md-end">
+      <img src="assets/images/health.jpg" alt="health">
+    </section>
+  </div>
+</main>
+
+<app-footer></app-footer>
