@@ -1,0 +1,52 @@
+
+<app-header></app-header>
+<div class="container py-5" *ngIf="booking$ | async as booking">
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0">
+      <h4 class="mb-0 fw-bold">Payment Successful</h4>
+      <small class="text-muted">Booking ID: {{ booking?.id }}</small>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded">
+            <div class="fw-semibold text-muted">Policy Name</div>
+            <div class="fw-bold">{{ booking?.planName }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded">
+            <div class="fw-semibold text-muted">Amount</div>
+            <div class="fw-bold text-primary">₹ {{ booking?.premiumAmt }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded">
+            <div class="fw-semibold text-muted">Payment Mode</div>
+            <div class="fw-bold">{{ booking?.paymentMode }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded">
+            <div class="fw-semibold text-muted">Validity</div>
+            <div class="fw-bold">{{ booking?.validity }} years</div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded">
+            <div class="fw-semibold text-muted">Frequency</div>
+            <div class="fw-bold">{{ booking?.paymentFreq }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+
