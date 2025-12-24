@@ -1,0 +1,45 @@
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Insurance } from '../../service/insurance';
+import { catchError, switchMap, of } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { Header } from '../header/header';
+import { Footer } from '../footer/footer';
+
+@Component({
+  selector: 'app-bookingdetails',
+  imports: [CommonModule, Header, Footer],
+  templateUrl: './bookingdetails.html',
+  styleUrl: './bookingdetails.css',
+})
+export class Bookingdetails {
+  constructor(private route: ActivatedRoute, private insurance: Insurance) {}
+  booking$!: ReturnType<Bookingdetails['buildBookingStream']>;
+
+  
+ngOnInit(): void {
+    this.booking$ = this.buildBookingStream();
+  }
+
+private buildBookingStream() {
+    return this.route.paramMap.pipe(
+      switchMap(params => {
+        const id = params.get('id');
+        if (!id) return of(null);
+
+        return this.insurance.getBookingById(id).pipe(
+          catchError((err) => {
+            console.warn('getBookingById failed; using localStorage fallback', err);
+
+            const local = JSON.parse(localStorage.getItem('ri.bookings') || '[]');
+            const found = local.find((b: any) => String(b.id) === String(id)) || null;
+
+            return of(found); 
+          })
+        );
+      })
+    );
+  }
+
+  
+}
