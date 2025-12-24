@@ -1,0 +1,189 @@
+import { Component } from '@angular/core';
+import { Footer } from '../footer/footer';
+import { Header } from '../header/header';
+import { Insurance } from '../../service/insurance';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Route, Router } from '@angular/router';
+
+@Component({
+  selector: 'app-plan',
+  imports: [Header, Footer, CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './plan.html',
+  styleUrl: './plan.css',
+})
+export class Plan {
+  plans$!: Observable<Plan1[]>;
+  openedPlanId: number | null = null;
+  selectedPlan: Plan1 | null = null;
+ paymentForm:FormGroup;
+  
+ 
+  constructor(private insuranceService: Insurance, private fb:FormBuilder, private router:Router) {
+    this.paymentForm = this.fb.group({
+    validity: [{ value: '', disabled: true }],
+    paymentMode: ['', [Validators.required]],
+    cardNumber: ['', [
+      
+      Validators.pattern(/^\d{4}-\d{4}-\d{4}-\d{4}$/)
+    ]],
+    premiumAmt: [{ value: 0, disabled: true }, [Validators.required, Validators.min(1)]],
+    paymentFreq: ['', [Validators.required]]
+  });
+  }
+ 
+  ngOnInit(): void {
+    this.plans$ = this.insuranceService.getPlans();
+  }
+ 
+  
+openPlanModal(plan: Plan1, event?: Event): void {
+    event?.preventDefault();
+    this.selectedPlan = plan
+
+    const el = document.getElementById('planDetailsModal');
+    if (!el) return;
+
+    const anyWin = window as any;
+    const modal = anyWin.bootstrap?.Modal.getInstance(el) || new anyWin.bootstrap.Modal(el);
+    modal.show();
+  }
+
+   private showModalById(id: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const anyWin = window as any;
+    const modal = anyWin.bootstrap?.Modal.getInstance(el) || new anyWin.bootstrap.Modal(el);
+    modal.show();
+  }
+  private hideModalById(id: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const anyWin = window as any;
+    anyWin.bootstrap?.Modal.getInstance(el)?.hide();
+  }
+
+   private getLeadById(id: string | number): any | null {
+    try {
+      const leads = JSON.parse(localStorage.getItem('ri.bookings') || '[]');
+      return leads.find((l: any) => String(l.id) === String(id)) || null;
+    } catch {
+      return null;
+    }
+  }
+
+   private calculatePremium(baseAmt: number, age: number): number {
+    const multiplier =
+      age <= 25 ? 0.90 :
+      age <= 35 ? 1.00 :
+      age <= 45 ? 1.20 :
+      age <= 55 ? 1.50 :
+                  1.80;
+    
+    return Math.round(baseAmt * multiplier);
+  }
+
+  private formatValidity(plan: Plan1): string {
+    const months = Number(plan.validity) || 0;
+    return `${months} months`;
+  }
+
+  openPaymentModal(): void {
+    if (!this.selectedPlan) return;
+
+    
+    const bookingId = localStorage.getItem('bookingId');
+    const lead = bookingId ? this.getLeadById(bookingId) : null;
+    const age = lead?.age ? Number(lead.age) : null;
+
+    
+console.log('bookingId=', bookingId);
+  console.log('lead=', lead);
+  console.log('lead.age raw=', lead?.age, ' parsed=', age);
+
+
+    
+    const premium = age != null
+      ? this.calculatePremium(this.selectedPlan.baseAmt, age)
+      : this.selectedPlan.baseAmt;
+
+    
+    this.paymentForm.patchValue({
+      validity: this.formatValidity(this.selectedPlan),
+      paymentMode: '',
+      cardNumber: '',
+      premiumAmt: premium,
+      paymentFreq: ''
+    });
+
+    this.hideModalById('planDetailsModal');
+    this.showModalById('paymentModal');
+  }
+
+
+  
+ 
+pay(): void {
+    if (!this.selectedPlan) return;
+
+    const bookingId = localStorage.getItem('bookingId');
+    if (!bookingId) {
+      alert('Missing booking ID. Please submit your details first.');
+      return;
+    }
+
+    const mode = this.paymentForm.get('paymentMode')?.value;
+    const cardCtrl = this.paymentForm.get('cardNumber');
+    if (mode === 'Credit Card' || mode === 'Debit Card') {
+      cardCtrl?.addValidators([Validators.required, Validators.pattern(/^\d{4}-\d{4}-\d{4}-\d{4}$/)]);
+    } else {
+      cardCtrl?.clearValidators();
+    }
+    cardCtrl?.updateValueAndValidity();
+
+    if (this.paymentForm.invalid) {
+      this.paymentForm.markAllAsTouched();
+      return;
+    }
+
+    const { validity, paymentMode, cardNumber, premiumAmt, paymentFreq } = this.paymentForm.getRawValue();
+
+    const patchPayload = {
+      planId: this.selectedPlan.planId,
+      planName: this.selectedPlan.planName,
+      validity: String(validity),
+      paymentMode: String(paymentMode),
+      cardNumber: cardNumber || undefined,
+      premiumAmt: Number(premiumAmt), 
+      paymentFreq: String(paymentFreq),
+    };
+
+    this.insuranceService.updateBooking(bookingId, patchPayload).subscribe({
+      next: (saved) => {
+        // Optional: update local backup
+        const bookings = JSON.parse(localStorage.getItem('ri.bookings') || '[]');
+        bookings.push({ id: bookingId, ...saved });
+        localStorage.setItem('ri.bookings', JSON.stringify(bookings));
+
+        this.hideModalById('paymentModal');
+        this.router.navigate(['/booking/success', bookingId]);
+      },
+      error: (err) => {
+        console.error('Failed to update booking:', err);
+        alert('Unable to process payment right now. Please try again later.');
+      }
+    });
+  }
+
+}
+
+
+
+export interface Plan1{
+      planId: number;
+      planName: string;
+      description: string;
+      baseAmt: number;
+      validity: number;
+}
