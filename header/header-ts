@@ -1,0 +1,63 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { Insurance } from '../../service/insurance';
+
+
+declare var bootstrap:any;
+
+@Component({
+  selector: 'app-header',
+  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  templateUrl: './header.html',
+  styleUrl: './header.css',
+})
+
+export class Header {
+  saving = false;
+  leadForm:FormGroup;
+  constructor(private fb: FormBuilder, private insuranceService:Insurance, private router:Router) {
+    this.leadForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    city: ['', [Validators.required]],
+    phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    age: [null as number | null, [Validators.required, Validators.min(18), Validators.max(120)]],
+  });
+  }
+  
+
+  openModal(event: Event) {
+    event.preventDefault(); 
+    const modalEl = document.getElementById('planModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+
+  saveAndGo() {
+    if (this.leadForm.invalid) return;
+
+    const partialData = this.leadForm.value;
+
+    this.insuranceService.createBooking(partialData).subscribe({
+      next: (res) => {
+        
+        localStorage.setItem('bookingId', res.id);
+
+        
+        const modalEl = document.getElementById('planModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+
+        
+        this.router.navigate(['/plan']);
+      },
+      error: (err) => {
+        console.error('Error saving data', err);
+      }
+    });
+  }
+}
+
+
