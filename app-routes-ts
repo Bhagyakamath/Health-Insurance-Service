@@ -6,5 +6,6 @@ import { Plan } from './component/plan/plan';
 export const routes: Routes = [
     {path:'', component:Home},
     {path:'about', component:About},
-    {path:'plan', component:Plan}
+    {path:'plan', component:Plan},
+    {path:'booking/success/:id', component:Bookingdetails}
 ];
