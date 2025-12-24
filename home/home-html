@@ -10,7 +10,8 @@
         Raindrops Insurance offers comprehensive plans tailored for you—
         get peace of mind with flexible premiums, transparent claims, and 24×7 support.
       </p>
-      <a class="btn btn-primary" [routerLink]="['/plan']">View Plans</a>
+      <a class="btn btn-primary" href="#" (click)="openModal($event)">View Plans</a> 
+       <!-- <a class="nav-link" href="#" (click)="openModal($event)">Plans</a> -->
     </section>
 
     <!-- Right: Image -->
@@ -20,5 +21,72 @@
     </section>
   </div>
 </main>
+
+
+
+<!-- Modal (place OUTSIDE the <li>) -->
+<div class="modal fade" id="planModal" tabindex="-1" aria-labelledby="planModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form [formGroup]="leadForm" (ngSubmit)="saveAndGo()" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="planModalLabel">Get a Plan Quote</h5>
+        <!-- BS5 close button -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Name -->
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" formControlName="name" placeholder="Full name">
+          <div class="text-danger small" *ngIf="leadForm.get('name')?.touched && leadForm.get('name')?.invalid">
+            Name is required (min 2 characters).
+          </div>
+        </div>
+
+        <!-- City -->
+        <div class="mb-3">
+          <label class="form-label">City</label>
+          <input type="text" class="form-control" formControlName="city" placeholder="City">
+          <div class="text-danger small" *ngIf="leadForm.get('city')?.touched && leadForm.get('city')?.invalid">
+            City is required.
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-3">
+          <label class="form-label">Phone</label>
+          <input type="tel" class="form-control" formControlName="phone" placeholder="10-digit phone">
+          <div class="text-danger small" *ngIf="leadForm.get('phone')?.touched && leadForm.get('phone')?.invalid">
+            Phone must be 10 digits.
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" formControlName="email" placeholder="name@example.com">
+          <div class="text-danger small" *ngIf="leadForm.get('email')?.touched && leadForm.get('email')?.invalid">
+            Please enter a valid email address.
+          </div>
+        </div>
+
+        <!-- Age -->
+        <div class="mb-3">
+          <label class="form-label">Age</label>
+          <input type="number" class="form-control" formControlName="age" placeholder="Age">
+          <div class="text-danger small" *ngIf="leadForm.get('age')?.touched && leadForm.get('age')?.invalid">
+            Age must be between 18 and 120.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="leadForm.invalid || saving">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <app-footer></app-footer>
