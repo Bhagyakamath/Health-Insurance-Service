@@ -1,0 +1,158 @@
+
+<app-header></app-header>
+
+<div class="container mt-4">
+  <h2 class="mb-4 fw-semibold">Select Plan</h2>
+
+  <div class="row g-4">
+    <div class="col-12" *ngFor="let plan of plans$ | async">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 fw-bold">{{ plan.planName }}</h5>
+        </div>
+
+        <div class="card-body">
+          <p class="text-muted mb-3">{{ plan.description }}</p>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-0 fw-semibold text-primary">
+                ₹ {{ plan.baseAmt }}
+              </h4>
+            </div>
+
+            
+            <button class="btn btn-outline-primary px-4"
+                    (click)="openPlanModal(plan, $event)">
+              VIEW MORE
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
+
+<div class="modal fade" id="planDetailsModal" tabindex="-1"
+     aria-labelledby="planDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" *ngIf="selectedPlan">
+      <div class="modal-header">
+        <h5 class="modal-title" id="planDetailsModalLabel">
+          {{ selectedPlan.planName }}
+        </h5>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-2 text-muted">{{ selectedPlan.description }}</p>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-semibold">Amount</span>
+          <span class="fw-bold text-primary fs-5">₹ {{ selectedPlan.baseAmt }}</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button"
+                class="btn btn-primary"
+                (click)="openPaymentModal()">
+          Buy
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal 2: Payment Details -->
+<div class="modal fade" id="paymentModal" tabindex="-1"
+     aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" [formGroup]="paymentForm">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Payment Details</h5>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Plan ID (read-only) -->
+        <div class="mb-3">
+          <label class="form-label">Plan ID</label>
+          <input type="text" class="form-control" [value]="selectedPlan?.planId" readonly>
+        </div>
+
+        <!-- Plan Name (read-only) -->
+        <div class="mb-3">
+          <label class="form-label">Plan Name</label>
+          <input type="text" class="form-control" [value]="selectedPlan?.planName" readonly>
+        </div>
+
+        <!-- Validity (editable, pre-filled from plan.validity if you store date/months) -->
+        <div class="mb-3">
+          <label class="form-label">Validity</label>
+          <input type="text" class="form-control" formControlName="validity" placeholder="YYYY-MM-DD or months">
+        </div>
+
+        <!-- Payment Mode -->
+        <div class="mb-3">
+          <label class="form-label">Payment Mode</label>
+          <select class="form-select" formControlName="paymentMode">
+            <option value="" disabled>Select mode</option>
+            <option>Credit Card</option>
+            <option>Debit Card</option>
+            <option>Net Banking</option>
+            <option>UPI</option>
+          </select>
+        </div>
+
+        <!-- Card Number (only shown when card payment selected) -->
+        <div class="mb-3" *ngIf="paymentForm.get('paymentMode')?.value === 'Credit Card' || paymentForm.get('paymentMode')?.value === 'Debit Card'">
+          <label class="form-label">Card Number</label>
+          <input type="text" class="form-control" formControlName="cardNumber" placeholder="1111-2222-3333-4444">
+          <div class="text-danger small" *ngIf="paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid">
+            Enter a valid card number (####-####-####-####).
+          </div>
+        </div>
+
+        <!-- Premium Amount (pre-filled from plan.baseAmt, editable if needed) -->
+        
+<div class="mb-3">
+  <label class="form-label">Premium Amount (₹)</label>
+  <input type="number" class="form-control" formControlName="premiumAmt" readonly>
+</div>
+
+
+        <!-- Payment Frequency -->
+        <div class="mb-3">
+          <label class="form-label">Payment Frequency</label>
+          <select class="form-select" formControlName="paymentFreq">
+            <option value="" disabled>Select frequency</option>
+            <option>Monthly</option>
+            <option>Quarterly</option>
+            <option>Half Yearly</option>
+            <option>Yearly</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">Close</button>
+        <button type="button"
+                class="btn btn-success"
+                [disabled]="paymentForm.invalid"
+                (click)="pay()">Pay</button>
+      </div>
+    </form>
+  </div>
+</div>
